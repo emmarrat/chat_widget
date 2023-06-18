@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './ChatWidget.css';
 
 interface Message {
@@ -10,15 +10,18 @@ const ChatWidget: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [widgetHeight, setWidgetHeight] = useState(150);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollToBottom();
+    setWidgetHeight(messages.length > 0 ? 400 : 150);
+
   }, [messages]);
 
   const sendMessage = async () => {
-    const userMessage = { role: 'user', content: inputText };
+    const userMessage = {role: 'user', content: inputText};
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInputText('');
     setIsLoading(true);
@@ -91,9 +94,9 @@ const ChatWidget: React.FC = () => {
     if (isLoading) {
       return (
         <div className="loading-animation">
-          <div className="circle" />
-          <div className="circle" />
-          <div className="circle" />
+          <div className="circle"/>
+          <div className="circle"/>
+          <div className="circle"/>
         </div>
       );
     }
@@ -102,8 +105,11 @@ const ChatWidget: React.FC = () => {
   };
 
   return (
-    <div className="widget">
-      <div className="messages" ref={containerRef}>
+    <div className="widget" style={{height: `${widgetHeight}px`}}>
+      <div
+        className="messages"
+        ref={containerRef}
+      >
         {renderMessages()}
         {renderLoadingAnimation()}
       </div>

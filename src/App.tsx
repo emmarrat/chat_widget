@@ -1,7 +1,6 @@
 import React from 'react';
 import ChatWidget from "./components/ChatWidget/ChatWidget";
 
-
 function App() {
   return (
 <div className="container">
