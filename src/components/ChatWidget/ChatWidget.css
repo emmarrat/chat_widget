@@ -1,0 +1,125 @@
+.widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    height: 400px;
+    width: 350px;
+    padding: 15px 5px;
+    border-radius: 15px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.49);
+}
+
+
+.messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: scroll;
+    scrollbar-width: thin;
+    flex-basis: 90%;
+    padding: 0 15px;
+}
+
+.message {
+    padding: 5px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.message-user {
+    background: #5e3391;
+    position: relative;
+}
+
+.message-assistant {
+    background: #9170b7;
+    position: relative;
+}
+
+.message-assistant::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    bottom: -14px;
+    rotate: 36deg;
+    border: 9px solid transparent;
+    border-top: 13px solid #9170b7;
+}
+
+.message-user::before {
+    content: '';
+    position: absolute;
+    right: -8px;
+    bottom: -13px;
+    rotate: 324deg;
+    border: 9px solid transparent;
+    border-top: 13px solid #5e3391;
+}
+
+.input-wrapper {
+    padding: 0 15px;
+    margin-top: 10px;
+}
+
+.input-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.input-container input,
+.input-container button {
+    border-radius: 5px;
+    border: 1px solid #e8e8e8;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px 5px;
+}
+
+.input-container input:focus-visible {
+    border-color: #9170b7;
+    outline: none;
+}
+
+.input-container button {
+    padding: 10px 25px;
+}
+
+.loading-animation {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    height: 100px;
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    margin: 5px;
+    border-radius: 50%;
+    background-color: #9170b7;
+    animation: bounce 0.5s infinite alternate;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-10px);
+    }
+}
+
+.circle:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.circle:nth-child(3) {
+    animation-delay: 0.4s;
+}
