@@ -1,24 +1,36 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './ChatWidget.css';
 
+interface Props {
+  url: string;
+  emptyMessages?: string;
+  minHeight?: number;
+  maxHeight?: number;
+}
+
 interface Message {
   role: string;
   content: string;
 }
 
-const ChatWidget: React.FC = () => {
+const ChatWidget: React.FC<Props> = ({
+                                       url,
+                                       emptyMessages,
+                                       minHeight,
+                                       maxHeight
+                                     }) => {
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [widgetHeight, setWidgetHeight] = useState(150);
-
+  const [widgetHeight, setWidgetHeight] = useState(minHeight ? minHeight : 150);
   const containerRef = useRef<HTMLDivElement>(null);
+  const widgetMaxHeight = maxHeight ? maxHeight : 400;
 
   useEffect(() => {
     scrollToBottom();
-    setWidgetHeight(messages.length > 0 ? 400 : 150);
-
-  }, [messages]);
+    setWidgetHeight(messages.length > 0 ? widgetMaxHeight : widgetHeight);
+  }, [messages, widgetMaxHeight, widgetHeight]);
 
   const sendMessage = async () => {
     const userMessage = {role: 'user', content: inputText};
@@ -28,7 +40,7 @@ const ChatWidget: React.FC = () => {
 
     try {
       const response = await fetch(
-        'https://cors-anywhere.herokuapp.com/https://emmarrat.app.n8n.cloud/webhook/chat-widget',
+        url,
         {
           method: 'POST',
           headers: {
@@ -53,9 +65,9 @@ const ChatWidget: React.FC = () => {
       }
     } catch (error) {
       console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleInputChange = (
@@ -77,9 +89,8 @@ const ChatWidget: React.FC = () => {
 
   const renderMessages = () => {
     if (messages.length === 0) {
-      return <h3>Please send a message to start the dialog...</h3>;
+      return <h3>{emptyMessages ? emptyMessages : 'Please send a message to start the dialog...'}</h3>;
     }
-
     return messages.map((message, index) => (
       <div
         key={index}
@@ -100,7 +111,6 @@ const ChatWidget: React.FC = () => {
         </div>
       );
     }
-
     return null;
   };
 

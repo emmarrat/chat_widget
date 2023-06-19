@@ -12,7 +12,6 @@
     transition: height 0.3s ease;
 }
 
-
 .messages {
     display: flex;
     flex-direction: column;
