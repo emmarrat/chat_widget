@@ -6,6 +6,10 @@ interface Props {
   emptyMessages?: string;
   minHeight?: number;
   maxHeight?: number;
+  userColor?: string,
+  botColor?: string,
+  btnText?: string;
+  bgColor?: string;
 }
 
 interface Message {
@@ -13,24 +17,29 @@ interface Message {
   content: string;
 }
 
+
 const ChatWidget: React.FC<Props> = ({
                                        url,
                                        emptyMessages,
-                                       minHeight,
-                                       maxHeight
+                                       minHeight = 120,
+                                       maxHeight = 400,
+                                       userColor = '#5e3391',
+                                       botColor = '#9170b7',
+                                       btnText = 'Send',
+                                       bgColor = '#ffff',
                                      }) => {
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([{role: 'assistant', content: 'test'}]);
+
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [widgetHeight, setWidgetHeight] = useState(minHeight ? minHeight : 150);
+  const [widgetHeight, setWidgetHeight] = useState(minHeight);
   const containerRef = useRef<HTMLDivElement>(null);
-  const widgetMaxHeight = maxHeight ? maxHeight : 400;
 
   useEffect(() => {
     scrollToBottom();
-    setWidgetHeight(messages.length > 0 ? widgetMaxHeight : widgetHeight);
-  }, [messages, widgetMaxHeight, widgetHeight]);
+    setWidgetHeight(messages.length > 0 ? maxHeight : widgetHeight);
+  }, [messages, maxHeight, widgetHeight]);
 
   const sendMessage = async () => {
     const userMessage = {role: 'user', content: inputText};
@@ -87,27 +96,34 @@ const ChatWidget: React.FC<Props> = ({
     }
   };
 
+
   const renderMessages = () => {
     if (messages.length === 0) {
       return <h3>{emptyMessages ? emptyMessages : 'Please send a message to start the dialog...'}</h3>;
     }
-    return messages.map((message, index) => (
-      <div
-        key={index}
-        className={`message message-${message.role}`}
-      >
-        {message.content}
-      </div>
-    ));
+
+    return messages.map((message, index) => {
+      const messageClassName = `message message-${message.role}`;
+      const beforeClassName = message.role === 'user' ? 'message-user-before' : 'message-assistant-before';
+      const beforeStyle = message.role === 'user' ? { borderTopColor: userColor } : { borderTopColor: botColor };
+
+      return (
+        <div key={index} className={messageClassName} style={{ background: message.role === 'user' ? userColor : botColor }}>
+          {message.content}
+          {message.role === 'user' && <div className={beforeClassName} style={beforeStyle} />}
+          {message.role === 'assistant' && <div className={beforeClassName} style={beforeStyle} />}
+        </div>
+      );
+    });
   };
 
   const renderLoadingAnimation = () => {
     if (isLoading) {
       return (
         <div className="loading-animation">
-          <div className="circle"/>
-          <div className="circle"/>
-          <div className="circle"/>
+          <div className="circle" style={{background: botColor}}/>
+          <div className="circle" style={{background: botColor}}/>
+          <div className="circle" style={{background: botColor}}/>
         </div>
       );
     }
@@ -115,7 +131,7 @@ const ChatWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="widget" style={{height: `${widgetHeight}px`}}>
+    <div className="widget" style={{height: `${widgetHeight}px`, background: bgColor}}>
       <div
         className="messages"
         ref={containerRef}
@@ -132,7 +148,7 @@ const ChatWidget: React.FC<Props> = ({
               value={inputText}
               onChange={handleInputChange}
             />
-            <button type="submit">Send</button>
+            <button type="submit" disabled={inputText.length === 0}>{btnText}</button>
           </div>
         </form>
       </div>
@@ -140,4 +156,6 @@ const ChatWidget: React.FC<Props> = ({
   );
 };
 
+
 export default ChatWidget;
+
